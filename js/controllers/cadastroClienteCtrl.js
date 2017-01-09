@@ -9,14 +9,14 @@ angular.module("softvinho").controller("cadastroClienteCtrl",function ($scope, $
 	);
 
 	$scope.app = "Cadastro de Clientes";
-	$scope.contatos = [];
+	$scope.clientes = [];
 
 	var carregarClientes = function () {
 		clientesAPI.getClientes()
 		.then(function (sucess) {
-			$scope.contatos = sucess.data;
+			$scope.clientes = sucess.data;
 		},function (error){
-			$scope.message = "Opps... não foi possível carregar clientes :(";
+			$scope.message = "Não foi possível listar todos os clientes :(";
 		});
 	};
 
@@ -26,27 +26,30 @@ angular.module("softvinho").controller("cadastroClienteCtrl",function ($scope, $
 			carregarClientes();
 			$scope.limparCadastro();
 		},function (error){
-			$scope.message = "Opps... não foi possível salvar cliente :(";
+			$scope.message = "Não foi possível salvar o cadastro do cliente :(";
 		});
 	};
 
 	$scope.removerCliente = function (cliente){
 		clientesAPI.deleteCliente(cliente)
 		.then(function (sucess) {
-			$scope.contatos.splice($scope.contatos.indexOf(cliente),1);
+			$scope.clientes.splice($scope.clientes.indexOf(cliente),1);
+			if($scope.cliente && $scope.cliente.id === cliente.id){
+				$scope.limparCadastro();
+			}
 		},function (error){
-			$scope.message = "Opps... não foi possível excluir cliente :(";
+			$scope.message = "Não foi possível excluir o cliente :(";
 		});
 	};
 
 	$scope.editarCliente = function (cliente){
-		$scope.contato = angular.copy(cliente);
+		$scope.cliente = angular.copy(cliente);
 		$window.scrollTo(0, 0);
 	};
 
 	$scope.limparCadastro = function (){
-		delete $scope.contato;
-		$scope.contatoForm.$setPristine();
+		delete $scope.cliente;
+		$scope.clienteForm.$setPristine();
 	};
 			
 	$scope.ordenarPor = function (campo){
