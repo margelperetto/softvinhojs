@@ -1,27 +1,56 @@
-<div class="jumbotron" ng-controller="cadastroClienteCtrl">
-	<h4>Cadastro de Clientes</h4>
+<div class="jumbotron" style="width: 800px;" ng-controller="cadastroVendaCtrl">
+	<h4>Cadastro de Vendas</h4>
 	
-	<form name="clienteForm">
+	<form name="itemForm">
+		<select name="vinho" class="form-control" ng-model="item.vinho" ng-options="vinho.nome+' - '+(vinho.precoSugerido | currency)+' - '+(vinho.peso | number)+'kg' for vinho in vinhos" ng-required="true" ng-change="vinhoSelecionado(item.vinho)">
+			<option value="">Selecione um vinho</option>
+		</select>
 		<div class="input-group">
-			<input style="width:20%;" name="id" disabled="true" ng-show="cliente.id" class="form-control" type="text" ng-model="cliente.id" placeholder="Id"/>
-			<input style="width:80%;" name="nome" class="form-control" type="text" ng-model="cliente.nome" placeholder="Nome" ng-required="true" ng-minlength="3"/>
-		</div>
-		<!-- para usar data
-		<input name="data" class="form-control" type="text" ng-model="cliente.data" placeholder="Data" ui-date/>
-		-->
+			<input name="quantidade" class="form-control" ng-model="item.quantidade" ng-required="true" type="number" step="1" min="0" placeholder="Quantidade"/>
+			<input style="margin-left:5px;" name="precoSugerido" class="form-control" type="text" ng-model="item.valorUnitario" placeholder="Valor Unitário" ng-required="true" ng-currency="" min="0.01" hard-cap="true" onclick="this.setSelectionRange(0, this.value.length)"/>
+			<input style="margin-left:5px;" name="peso" class="form-control" ng-model="item.pesoVinho" ng-required="true" type="number" step="0.001" min="0.000" placeholder="Peso (kg)"/>
+		</div>	
+	</form>
+	<button name="btnAddItem" class="btn btn-primary btn-sm"   ng-disabled="itemForm.$invalid" ng-click="incluirItem(item)">Adicionar item</button>
+	<button name="btnLimparItem" class="btn btn-secundary btn-sm" ng-disabled="false" ng-click="limparItem()">Limpar item</button>
+	
+	<table class="table table-striped" ng-show="venda.itens.length>0">
+		<tr>
+			<th></th>
+			<th>Vinho</th>
+			<th>Peso</th>
+			<th>Qtde.</th>
+			<th>Vl.Unit</th>
+		</tr>
+		<tr style="text-align: left;" ng-repeat="i in venda.itens">
+			<td style="width: 65px; margin: 0;">
+				<button class="btn btn-sm btn-danger" ng-click="removerItem(i)">X</button>
+			</td>
+			<td ng-bind="i.vinho.nome"></td>
+			<td ng-bind="i.pesoVinho | number" style="width: 80px;"></td>
+			<td ng-bind="i.quantidade | number" style="width: 80px;"></td>
+			<td ng-bind="i.valorUnitario | currency" style="width: 80px;"></td>		
+		</tr>
+	</table>
+
+	<hr/>
+
+	<form name="vendaForm">
+		<select name="cliente" class="form-control" ng-model="venda.cliente" ng-options="cliente.nome for cliente in clientes" ng-required="true">
+			<option value="">Selecione um cliente</option>
+		</select>
+		<input name="distancia" class="form-control" ng-model="venda.distancia" ng-required="true" type="number" step="1" min="0" placeholder="Distância(km)"/>
+			
 	</form>
 
-	<div ng-messages="clienteForm.nome.$error" ng-show="clienteForm.$dirty">
+	<div ng-messages="vendaForm.distancia.$error" ng-show="vendaForm.$dirty">
 		<div ng-message="required" class="alert alert-danger">
-			Preencha o nome!
-		</div>
-		<div ng-message="minlength" class="alert alert-warning">
-			O nome deve ter no mínimo três caracteres!
+			Informe a distância!
 		</div>
 	</div>
 	
-	<button name="btnSalvar" class="btn btn-primary btn-sm"   ng-disabled="clienteForm.$invalid" ng-click="salvarCliente(cliente)">Salvar Cadastro do Cliente</button>
-	<button name="btnLimpar" class="btn btn-secundary btn-sm" ng-disabled="false" ng-show="cliente.id" ng-click="limparCadastro()">Limpar Formulário</button>
+	<button name="btnSalvar" class="btn btn-primary btn-sm"   ng-disabled="vendaForm.$invalid" ng-click="salvarVenda(venda)">Registrar Venda</button>
+	<button name="btnLimpar" class="btn btn-secundary btn-sm" ng-disabled="false" ng-click="limparCadastro()">Limpar Campos</button>
 	
 	<hr/>
 
@@ -29,32 +58,32 @@
 		{{message}}
 	</ui-alert>
 
-	<div ng-show="clientes.length>0">
-		<input class="form-control" type="text" ng-model="pesquisa" placeholder="O que você está buscando?"/>
-		<table class="table table-striped">
-			<tr>
-				<th></th>
-				<th><a href="" ng-click="ordenarPor('if')">Id.</a></th>
-				<th><a href="" ng-click="ordenarPor('nome')">Nome</a></th>
-			</tr>
-			<tr style="text-align: left;" ng-repeat="c in clientes | filter:pesquisa | orderBy:campoOrdenacao:inverterOrdem">
-				<td style="width: 120px;">
-					<button class="btn btn-danger btn-sm" ng-click="removerCliente(c)">X</button>
-					<button class="btn btn- btn-sm btn-link" ng-click="editarCliente(c)">Edit</button>
-				</td>
-				<td ng-bind="c.id" style="width: 80px;"></td>
-				<td ng-bind="c.nome | ellipsis:30"></td>
-			</tr>
-		</table>		
-	</div>
+	<div ng-show="vendas.length>0">
 
-	<ui-accordions>
-		<ui-accordion title="Accordion 1">
-			Aqui o conteúdo do accordion 1
-		</ui-accordion>
-		<ui-accordion title="Accordion 2">
-			Aqui o conteúdo do accordion 2
-		</ui-accordion>
-	</ui-accordions>
+		<ui-accordions>
+			<ui-accordion title="{{v.id}} - {{v.dataVenda | date:'dd/MM/yyyy HH:MM'}} - itens: {{v.totalItens | currency}} + frete: {{v.totalFrete | currency}} = {{v.totalGeral | currency}} / {{v.pesoTotal | number}}kg" ng-repeat="v in vendas">
+				<button class="btn btn-sm btn-danger" ng-click="removerVenda(v)">Remover venda</button>
+				{{v.cliente.nome}} - Distância: {{v.distancia | number}} km
+				<table class="table table-striped">
+					<tr>
+						<th>Id.</th>
+						<th>Vinho</th>
+						<th>Qtde.</th>
+						<th>Vl.Unit</th>
+						<th>Total</th>
+						<th style="width: 110px;">Peso Total</th>
+					</tr>
+					<tr style="text-align: left;" ng-repeat="i in v.itens">
+						<td ng-bind="i.id" style="width: 50px;"></td>
+						<td ng-bind="i.vinho.nome"></td>
+						<td ng-bind="i.quantidade | number" style="width: 70px;"></td>
+						<td ng-bind="i.valorUnitario | currency" style="width: 90px;"></td>
+						<td ng-bind="i.totalItem | currency" style="width: 90px;"></td>
+						<td style="width: 90px;">{{i.pesoTotalItem | number}}kg</td>
+					</tr>
+				</table>
+			</ui-accordion>
+		</ui-accordions>		
+	</div>
 
 </div>
