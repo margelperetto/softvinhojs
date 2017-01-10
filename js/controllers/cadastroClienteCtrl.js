@@ -8,7 +8,6 @@ angular.module("softvinho").controller("cadastroClienteCtrl",function ($scope, $
 		}
 	);
 
-	$scope.app = "Cadastro de Clientes";
 	$scope.clientes = [];
 
 	var carregarClientes = function () {

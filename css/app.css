@@ -1,19 +1,26 @@
 .jumbotron{
 	width: 600px;
 	text-align: center;
-	margin-top: 20px;
+	margin-top: 15px;
 	margin-left: auto;
 	margin-right: auto;
+	padding: 15px;
 }
 .table{
-	margin-top: 20px;
+	margin-top: 15px;
 }
 .form-control{
-	margin-bottom: 10px;
+	margin-bottom: 15px;
 }
 .negrito{
 	font-weight: bold;
 }
 .input-group{
-	margin-bottom: 10px;
+	margin-bottom: 15px;
+}
+.card-deck{
+	text-align: center;
+	margin-top: 15px;
+	margin-left: auto;
+	margin-right: auto;	
 }

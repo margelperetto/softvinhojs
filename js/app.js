@@ -1,1 +1,1 @@
-angular.module("softvinho",["ngMessages"]);
+angular.module("softvinho",["ngMessages","ngRoute","ng-currency"]);

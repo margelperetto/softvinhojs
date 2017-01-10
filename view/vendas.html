@@ -1,0 +1,60 @@
+<div class="jumbotron" ng-controller="cadastroClienteCtrl">
+	<h4>Cadastro de Clientes</h4>
+	
+	<form name="clienteForm">
+		<div class="input-group">
+			<input style="width:20%;" name="id" disabled="true" ng-show="cliente.id" class="form-control" type="text" ng-model="cliente.id" placeholder="Id"/>
+			<input style="width:80%;" name="nome" class="form-control" type="text" ng-model="cliente.nome" placeholder="Nome" ng-required="true" ng-minlength="3"/>
+		</div>
+		<!-- para usar data
+		<input name="data" class="form-control" type="text" ng-model="cliente.data" placeholder="Data" ui-date/>
+		-->
+	</form>
+
+	<div ng-messages="clienteForm.nome.$error" ng-show="clienteForm.$dirty">
+		<div ng-message="required" class="alert alert-danger">
+			Preencha o nome!
+		</div>
+		<div ng-message="minlength" class="alert alert-warning">
+			O nome deve ter no mínimo três caracteres!
+		</div>
+	</div>
+	
+	<button name="btnSalvar" class="btn btn-primary btn-sm"   ng-disabled="clienteForm.$invalid" ng-click="salvarCliente(cliente)">Salvar Cadastro do Cliente</button>
+	<button name="btnLimpar" class="btn btn-secundary btn-sm" ng-disabled="false" ng-show="cliente.id" ng-click="limparCadastro()">Limpar Formulário</button>
+	
+	<hr/>
+
+	<ui-alert title="Ops, aconteceu um problema!" ng-show="message">
+		{{message}}
+	</ui-alert>
+
+	<div ng-show="clientes.length>0">
+		<input class="form-control" type="text" ng-model="pesquisa" placeholder="O que você está buscando?"/>
+		<table class="table table-striped">
+			<tr>
+				<th></th>
+				<th><a href="" ng-click="ordenarPor('if')">Id.</a></th>
+				<th><a href="" ng-click="ordenarPor('nome')">Nome</a></th>
+			</tr>
+			<tr style="text-align: left;" ng-repeat="c in clientes | filter:pesquisa | orderBy:campoOrdenacao:inverterOrdem">
+				<td style="width: 120px;">
+					<button class="btn btn-danger btn-sm" ng-click="removerCliente(c)">X</button>
+					<button class="btn btn- btn-sm btn-link" ng-click="editarCliente(c)">Edit</button>
+				</td>
+				<td ng-bind="c.id" style="width: 80px;"></td>
+				<td ng-bind="c.nome | ellipsis:30"></td>
+			</tr>
+		</table>		
+	</div>
+
+	<ui-accordions>
+		<ui-accordion title="Accordion 1">
+			Aqui o conteúdo do accordion 1
+		</ui-accordion>
+		<ui-accordion title="Accordion 2">
+			Aqui o conteúdo do accordion 2
+		</ui-accordion>
+	</ui-accordions>
+
+</div>
