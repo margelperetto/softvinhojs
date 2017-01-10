@@ -1,4 +1,4 @@
-angular.module("softvinho").controller("cadastroVendaCtrl",function ($scope, $window, vendasAPI, clientesAPI, vinhosAPI){
+angular.module("softvinho").controller("cadastroVendaCtrl",function ($scope, $window, vendasAPI, clientesAPI, vinhosAPI, freteAPI){
 
 	$scope.vendas = [];
 	$scope.vinhos = [];
@@ -67,12 +67,25 @@ angular.module("softvinho").controller("cadastroVendaCtrl",function ($scope, $wi
 		if(!$scope.venda.itens){
 			$scope.venda.itens = [];
 		}
+		item.pesoTotalItem = item.quantidade * item.pesoVinho;
 		$scope.venda.itens.push(angular.copy(item));
 		$scope.limparItem();
+		$scope.calcularPesoTotal();
 	};
 
 	$scope.removerItem = function (item){
 		$scope.venda.itens.splice($scope.venda.itens.indexOf(item),1);
+		$scope.calcularPesoTotal();		
+	};
+
+	$scope.calcularPesoTotal = function (){
+		var pesoTotal = 0;
+		if($scope.venda && $scope.venda.itens){
+			$scope.venda.itens.forEach(function (item){
+				pesoTotal += item.pesoTotalItem;
+			});
+		}
+		$scope.venda.pesoTotal = pesoTotal;
 	};
 
 	$scope.limparItem = function (){
@@ -90,6 +103,18 @@ angular.module("softvinho").controller("cadastroVendaCtrl",function ($scope, $wi
 		$scope.item.valorUnitario = valor;
 		$scope.item.pesoVinho = peso;
 	};
+
+	$scope.simularFrete = function (){
+		freteAPI.calcularFrete($scope.venda.distancia,$scope.venda.pesoTotal)
+		.then(
+			function (success){
+				$scope.venda.totalFrete = success.data;
+			}, function (error){
+				console.log("Erro ao calular frete: "+erro.data);
+				$scope.message = "Não foi possível calcular o frete :(";
+			}
+		);
+	};	
 
 	carregarVendas();
 	carregarClientes();

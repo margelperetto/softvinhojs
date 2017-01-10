@@ -1,12 +1,4 @@
-angular.module("softvinho").controller("cadastroClienteCtrl",function ($scope, $window, clientesAPI, freteAPI){
-
-	freteAPI.calcularFrete(110,4.125).then(
-		function (success){
-			console.log("TESTANDO CALCULO FRETE: "+success.data);
-		}, function (error){
-			console.log("Erro ao calular frete: "+erro.data);
-		}
-	);
+angular.module("softvinho").controller("cadastroClienteCtrl",function ($scope, $window, clientesAPI){
 
 	$scope.clientes = [];
 

@@ -18,18 +18,18 @@
 		<tr>
 			<th></th>
 			<th>Vinho</th>
-			<th>Peso</th>
 			<th>Qtde.</th>
 			<th>Vl.Unit</th>
+			<th>Peso</th>
 		</tr>
 		<tr style="text-align: left;" ng-repeat="i in venda.itens">
 			<td style="width: 65px; margin: 0;">
 				<button class="btn btn-sm btn-danger" ng-click="removerItem(i)">X</button>
 			</td>
 			<td ng-bind="i.vinho.nome"></td>
-			<td ng-bind="i.pesoVinho | number" style="width: 80px;"></td>
 			<td ng-bind="i.quantidade | number" style="width: 80px;"></td>
-			<td ng-bind="i.valorUnitario | currency" style="width: 80px;"></td>		
+			<td ng-bind="i.valorUnitario | currency" style="width: 80px;"></td>
+			<td ng-bind="i.pesoTotalItem | number" style="width: 80px;"></td>		
 		</tr>
 	</table>
 
@@ -39,15 +39,16 @@
 		<select name="cliente" class="form-control" ng-model="venda.cliente" ng-options="cliente.nome for cliente in clientes" ng-required="true">
 			<option value="">Selecione um cliente</option>
 		</select>
-		<input name="distancia" class="form-control" ng-model="venda.distancia" ng-required="true" type="number" step="1" min="0" placeholder="Distância(km)"/>
-			
+		<div class="input-group">
+			<input name="distancia" style="text-align: right; widht: 20%;" class="form-control" ng-model="venda.distancia" ng-required="true" type="number" step="1" min="0" placeholder="Distância(km)"/>
+			<label style="margin:5px;">km</label>
+			<input style="margin-left:5px; text-align: right;" name="pesoTotal" class="form-control" ng-model="venda.pesoTotal" disabled="true" type="text" placeholder="Peso Total(kg)"/>
+			<label style="margin:5px;">kg</label>
+			<button style="margin-left:5px;" name="btnFrete" class="btn btn-info btn-sm" ng-disabled="!venda.pesoTotal||!venda.distancia" ng-click="simularFrete()">Simular Frete</button>
+			<input style="margin-left:5px;" name="totalFrete" class="form-control" ng-model="venda.totalFrete" ng-currency="" disabled="true" ng-show="venda.totalFrete" type="text" placeholder="Total Frete"/>
+		
+		</div>	
 	</form>
-
-	<div ng-messages="vendaForm.distancia.$error" ng-show="vendaForm.$dirty">
-		<div ng-message="required" class="alert alert-danger">
-			Informe a distância!
-		</div>
-	</div>
 	
 	<button name="btnSalvar" class="btn btn-primary btn-sm"   ng-disabled="vendaForm.$invalid" ng-click="salvarVenda(venda)">Registrar Venda</button>
 	<button name="btnLimpar" class="btn btn-secundary btn-sm" ng-disabled="false" ng-click="limparCadastro()">Limpar Campos</button>
@@ -61,7 +62,7 @@
 	<div ng-show="vendas.length>0">
 
 		<ui-accordions>
-			<ui-accordion title="{{v.id}} - {{v.dataVenda | date:'dd/MM/yyyy HH:MM'}} - itens: {{v.totalItens | currency}} + frete: {{v.totalFrete | currency}} = {{v.totalGeral | currency}} / {{v.pesoTotal | number}}kg" ng-repeat="v in vendas">
+			<ui-accordion title="{{v.id}} - {{v.dataVenda | date:'dd/MM/yyyy HH:MM'}} - itens: {{v.totalItens | currency}} + frete: {{v.totalFrete | currency}} = {{v.totalGeral | currency}} / {{v.pesoTotal | number}}kg" ng-repeat="v in vendas | orderBy:data:true">
 				<button class="btn btn-sm btn-danger" ng-click="removerVenda(v)">Remover venda</button>
 				{{v.cliente.nome}} - Distância: {{v.distancia | number}} km
 				<table class="table table-striped">
