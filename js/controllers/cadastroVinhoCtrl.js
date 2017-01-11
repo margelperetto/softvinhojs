@@ -8,7 +8,7 @@ angular.module("softvinho").controller("cadastroVinhoCtrl",function ($scope, $wi
 		.then(function (sucess) {
 			$scope.vinhos = sucess.data;
 		},function (error){
-			$scope.message = "Não foi possível listar todos os vinhos :(";
+			$scope.message = "Não foi possível listar todos os vinhos. "+error.status+" - "+error.statusText;
 		});
 	};
 
@@ -18,7 +18,11 @@ angular.module("softvinho").controller("cadastroVinhoCtrl",function ($scope, $wi
 			carregarVinhos();
 			$scope.limparCadastro();
 		},function (error){
-			$scope.message = "Não foi possível salvar o cadastro do vinho :(";
+			if(error.status == 409){
+				$scope.message = "Já existe um vinho cadastrado com esse nome";
+			}else{
+				$scope.message = "Não foi possível salvar o cadastro do vinho. "+error.status+"-"+error.statusText;
+			}
 		});
 	};
 
@@ -30,17 +34,19 @@ angular.module("softvinho").controller("cadastroVinhoCtrl",function ($scope, $wi
 				$scope.limparCadastro();
 			}
 		},function (error){
-			$scope.message = "Não foi possível excluir o vinho :(";
+			$scope.message = "Não foi possível excluir o vinho. "+error.status+" - "+error.statusText;
 		});
 	};
 
 	$scope.editarVinho = function (vinho){
+		$scope.limparCadastro();
 		$scope.vinho = angular.copy(vinho);
 		$window.scrollTo(0, 0);
 	};
 
 	$scope.limparCadastro = function (){
 		delete $scope.vinho;
+		delete $scope.message;
 		$scope.vinhoForm.$setPristine();
 	};
 			

@@ -7,7 +7,7 @@ angular.module("softvinho").controller("cadastroClienteCtrl",function ($scope, $
 		.then(function (sucess) {
 			$scope.clientes = sucess.data;
 		},function (error){
-			$scope.message = "Não foi possível listar todos os clientes :(";
+			$scope.message = "Não foi possível listar todos os clientes "+error.status+"-"+error.statusText;
 		});
 	};
 
@@ -17,7 +17,11 @@ angular.module("softvinho").controller("cadastroClienteCtrl",function ($scope, $
 			carregarClientes();
 			$scope.limparCadastro();
 		},function (error){
-			$scope.message = "Não foi possível salvar o cadastro do cliente :(";
+			if(error.status == 409){
+				$scope.message = "Já existe um cliente cadastrado com esse nome";
+			}else{
+				$scope.message = "Não foi possível salvar o cadastro do cliente. "+error.status+"-"+error.statusText;
+			}
 		});
 	};
 
@@ -29,17 +33,19 @@ angular.module("softvinho").controller("cadastroClienteCtrl",function ($scope, $
 				$scope.limparCadastro();
 			}
 		},function (error){
-			$scope.message = "Não foi possível excluir o cliente :(";
+			$scope.message = "Não foi possível excluir o cliente "+error.status+"-"+error.statusText;
 		});
 	};
 
 	$scope.editarCliente = function (cliente){
+		$scope.limparCadastro();
 		$scope.cliente = angular.copy(cliente);
 		$window.scrollTo(0, 0);
 	};
 
 	$scope.limparCadastro = function (){
 		delete $scope.cliente;
+		delete $scope.message;
 		$scope.clienteForm.$setPristine();
 	};
 			

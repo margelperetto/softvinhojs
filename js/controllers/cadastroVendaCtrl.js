@@ -9,7 +9,7 @@ angular.module("softvinho").controller("cadastroVendaCtrl",function ($scope, $wi
 		.then(function (sucess) {
 			$scope.vendas = sucess.data;
 		},function (error){
-			$scope.message = "Não foi possível listar todos os vendas :(";
+			$scope.message = "Não foi possível listar todos os vendas. "+error.status+"-"+error.statusText;
 		});
 	};
 
@@ -18,7 +18,7 @@ angular.module("softvinho").controller("cadastroVendaCtrl",function ($scope, $wi
 		.then(function (sucess) {
 			$scope.clientes = sucess.data;
 		},function (error){
-			$scope.message = "Não foi possível listar todos os clientes :(";
+			$scope.message = "Não foi possível listar todos os clientes. "+error.status+"-"+error.statusText;
 		});
 	};
 
@@ -27,7 +27,7 @@ angular.module("softvinho").controller("cadastroVendaCtrl",function ($scope, $wi
 		.then(function (sucess) {
 			$scope.vinhos = sucess.data;
 		},function (error){
-			$scope.message = "Não foi possível listar todos os vinhos :(";
+			$scope.message = "Não foi possível listar todos os vinhos. "+error.status+"-"+error.statusText;
 		});
 	};
 
@@ -37,7 +37,7 @@ angular.module("softvinho").controller("cadastroVendaCtrl",function ($scope, $wi
 			carregarVendas();
 			$scope.limparCadastro();
 		},function (error){
-			$scope.message = "Não foi possível salvar o cadastro do venda :(";
+			$scope.message = "Não foi possível salvar o cadastro do venda. "+error.status+"-"+error.statusText;
 		});
 	};
 
@@ -49,13 +49,14 @@ angular.module("softvinho").controller("cadastroVendaCtrl",function ($scope, $wi
 				$scope.limparCadastro();
 			}
 		},function (error){
-			$scope.message = "Não foi possível excluir o venda :(";
+			$scope.message = "Não foi possível excluir o venda. "+error.status+"-"+error.statusText;
 		});
 	};
 
 	$scope.limparCadastro = function (){
 		$scope.limparItem();
 		delete $scope.venda;
+		delete $scope.message;
 		$scope.vendaForm.$setPristine();
 	};
 
@@ -111,7 +112,7 @@ angular.module("softvinho").controller("cadastroVendaCtrl",function ($scope, $wi
 				$scope.venda.totalFrete = success.data;
 			}, function (error){
 				console.log("Erro ao calular frete: "+erro.data);
-				$scope.message = "Não foi possível calcular o frete :(";
+				$scope.message = "Não foi possível calcular o frete. "+error.status+"-"+error.statusText;
 			}
 		);
 	};	

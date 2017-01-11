@@ -28,7 +28,7 @@
 	</div>
 	
 	<button name="btnSalvar" class="btn btn-primary btn-sm"   ng-disabled="vinhoForm.$invalid" ng-click="salvarVinho(vinho)">Salvar Cadastro do Vinho</button>
-	<button name="btnLimpar" class="btn btn-secundary btn-sm" ng-disabled="false" ng-show="vinho.id" ng-click="limparCadastro()">Limpar Formulário</button>
+	<button name="btnLimpar" class="btn btn-secundary btn-sm" ng-disabled="false" ng-show="vinhoForm.$dirty || vinho.id" ng-click="limparCadastro()">Limpar Formulário</button>
 	
 	<hr/>
 

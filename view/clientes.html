@@ -21,7 +21,7 @@
 	</div>
 	
 	<button name="btnSalvar" class="btn btn-primary btn-sm"   ng-disabled="clienteForm.$invalid" ng-click="salvarCliente(cliente)">Salvar Cadastro do Cliente</button>
-	<button name="btnLimpar" class="btn btn-secundary btn-sm" ng-disabled="false" ng-show="cliente.id" ng-click="limparCadastro()">Limpar Formulário</button>
+	<button name="btnLimpar" class="btn btn-secundary btn-sm" ng-disabled="false" ng-show="clienteForm.$dirty || cliente.id" ng-click="limparCadastro()">Limpar Formulário</button>
 	
 	<hr/>
 
