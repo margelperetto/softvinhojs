@@ -1,4 +1,4 @@
-angular.module("softvinho").controller("cadastroVinhoCtrl",function ($scope, $window, vinhosAPI){
+angular.module("softvinho").controller("cadastroVinhoCtrl",function ($scope, $window, vinhosAPI, errorAPI){
 
 	$scope.vinhos = [];
 	$scope.tipos = ["TINTO","BRANCO","ROSADO","ESPUMANTE"];
@@ -8,7 +8,7 @@ angular.module("softvinho").controller("cadastroVinhoCtrl",function ($scope, $wi
 		.then(function (sucess) {
 			$scope.vinhos = sucess.data;
 		},function (error){
-			$scope.message = "Não foi possível listar todos os vinhos. "+error.status+" - "+error.statusText;
+			$scope.message = errorAPI.configMsgError("Listar vinhos",error);
 		});
 	};
 
@@ -18,11 +18,7 @@ angular.module("softvinho").controller("cadastroVinhoCtrl",function ($scope, $wi
 			carregarVinhos();
 			$scope.limparCadastro();
 		},function (error){
-			if(error.status == 409){
-				$scope.message = "Já existe um vinho cadastrado com esse nome";
-			}else{
-				$scope.message = "Não foi possível salvar o cadastro do vinho. "+error.status+"-"+error.statusText;
-			}
+			$scope.message = errorAPI.configMsgError("Salvar vinho",error);
 		});
 	};
 
@@ -34,7 +30,7 @@ angular.module("softvinho").controller("cadastroVinhoCtrl",function ($scope, $wi
 				$scope.limparCadastro();
 			}
 		},function (error){
-			$scope.message = "Não foi possível excluir o vinho. "+error.status+" - "+error.statusText;
+			$scope.message = errorAPI.configMsgError("Remover vinho",error);
 		});
 	};
 

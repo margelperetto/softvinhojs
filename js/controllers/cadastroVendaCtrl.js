@@ -1,15 +1,15 @@
-angular.module("softvinho").controller("cadastroVendaCtrl",function ($scope, $window, vendasAPI, clientesAPI, vinhosAPI, freteAPI){
+angular.module("softvinho").controller("cadastroVendaCtrl",function ($scope, $window, vendasAPI, clientesAPI, vinhosAPI, freteAPI, errorAPI){
 
 	$scope.vendas = [];
 	$scope.vinhos = [];
 	$scope.clientes = [];
-
+	
 	var carregarVendas = function () {
 		vendasAPI.getVendas()
 		.then(function (sucess) {
 			$scope.vendas = sucess.data;
 		},function (error){
-			$scope.message = "Não foi possível listar todos os vendas. "+error.status+"-"+error.statusText;
+			$scope.message = errorAPI.configMsgError("Listar vendas",error);
 		});
 	};
 
@@ -18,7 +18,7 @@ angular.module("softvinho").controller("cadastroVendaCtrl",function ($scope, $wi
 		.then(function (sucess) {
 			$scope.clientes = sucess.data;
 		},function (error){
-			$scope.message = "Não foi possível listar todos os clientes. "+error.status+"-"+error.statusText;
+			$scope.message = errorAPI.configMsgError("Listar clientes",error);
 		});
 	};
 
@@ -27,7 +27,7 @@ angular.module("softvinho").controller("cadastroVendaCtrl",function ($scope, $wi
 		.then(function (sucess) {
 			$scope.vinhos = sucess.data;
 		},function (error){
-			$scope.message = "Não foi possível listar todos os vinhos. "+error.status+"-"+error.statusText;
+			$scope.message = errorAPI.configMsgError("Listar vinhos",error);
 		});
 	};
 
@@ -37,7 +37,7 @@ angular.module("softvinho").controller("cadastroVendaCtrl",function ($scope, $wi
 			carregarVendas();
 			$scope.limparCadastro();
 		},function (error){
-			$scope.message = "Não foi possível salvar o cadastro do venda. "+error.status+"-"+error.statusText;
+			$scope.message = errorAPI.configMsgError("salvar venda",error);
 		});
 	};
 
@@ -49,7 +49,7 @@ angular.module("softvinho").controller("cadastroVendaCtrl",function ($scope, $wi
 				$scope.limparCadastro();
 			}
 		},function (error){
-			$scope.message = "Não foi possível excluir o venda. "+error.status+"-"+error.statusText;
+			$scope.message = errorAPI.configMsgError("Remover venda",error);
 		});
 	};
 
@@ -111,8 +111,7 @@ angular.module("softvinho").controller("cadastroVendaCtrl",function ($scope, $wi
 			function (success){
 				$scope.venda.totalFrete = success.data;
 			}, function (error){
-				console.log("Erro ao calular frete: "+erro.data);
-				$scope.message = "Não foi possível calcular o frete. "+error.status+"-"+error.statusText;
+				$scope.message = errorAPI.configMsgError("Calcular frete",error);
 			}
 		);
 	};	
