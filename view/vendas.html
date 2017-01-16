@@ -6,52 +6,63 @@
 			<option value="">Selecione um vinho</option>
 		</select>
 		<div class="input-group">
-			<input name="quantidade" class="form-control" ng-model="item.quantidade" ng-required="true" type="number" step="1" min="0" placeholder="Quantidade"/>
-			<input style="margin-left:5px;" name="precoSugerido" class="form-control" type="text" ng-model="item.valorUnitario" placeholder="Valor Unitário" ng-required="true" ng-currency="" min="0.01" hard-cap="true" onclick="this.setSelectionRange(0, this.value.length)"/>
-			<input style="margin-left:5px;" name="peso" class="form-control" ng-model="item.pesoVinho" ng-required="true" type="number" step="0.001" min="0.000" placeholder="Peso (kg)"/>
+			<input name="quantidade" class="form-control" ng-model="item.quantidade" ng-required="true" type="number" step="1" min="0" placeholder="Quantidade" ng-change="calcularTotaisItem(item)"/>
+			<input style="margin-left:5px;" name="precoSugerido" class="form-control" type="text" ng-model="item.valorUnitario" placeholder="Valor Unitário" ng-required="true" ng-currency="" min="0.01" hard-cap="true" ng-change="calcularTotaisItem(item)" onclick="this.setSelectionRange(0, this.value.length)"/>
+			<input style="margin-left:5px;" name="totalItem" disabled="true" class="form-control" type="text" ng-model="item.totalItem" placeholder="Total Item" ng-currency="" min="0.01" hard-cap="true"/>
+			<input style="margin-left:5px;" name="peso" disabled="true" class="form-control" ng-model="item.pesoVinho" ng-required="true" type="number" step="0.001" min="0.000" placeholder="Peso(kg)"/>
+			<input style="margin-left:5px;" name="pesoTotal" disabled="true" class="form-control" ng-model="item.pesoTotalItem" type="number" step="0.001" min="0.000" placeholder="Peso Total(kg)"/>
 		</div>	
 	</form>
 	<button name="btnAddItem" class="btn btn-primary btn-sm"   ng-disabled="itemForm.$invalid" ng-click="incluirItem(item)">Adicionar item</button>
 	<button name="btnLimparItem" class="btn btn-secundary btn-sm" ng-disabled="false" ng-click="limparItem()">Limpar item</button>
 	
-	<table class="table table-striped" ng-show="venda.itens.length>0">
+	<table name="tb_itens" class="table table-striped" ng-show="venda.itens.length>0">
 		<tr>
-			<th></th>
+			<th style="width: 65px; margin: 0;"></th>
 			<th>Vinho</th>
-			<th>Qtde.</th>
-			<th>Vl.Unit</th>
-			<th>Peso</th>
+			<th style="width: 80px;">Qtde.</th>
+			<th style="width: 80px;">Vl.Unit.</th>
+			<th style="width: 100px;">Total Item</th>
+			<th style="width: 120px;">Peso Total</th>
 		</tr>
 		<tr style="text-align: left;" ng-repeat="i in venda.itens">
-			<td style="width: 65px; margin: 0;">
-				<button class="btn btn-sm btn-danger" ng-click="removerItem(i)">X</button>
-			</td>
+			<td ><button class="btn btn-sm btn-danger" ng-click="removerItem(i)">X</button></td>
 			<td ng-bind="i.vinho.nome"></td>
-			<td ng-bind="i.quantidade | number" style="width: 80px;"></td>
-			<td ng-bind="i.valorUnitario | currency" style="width: 80px;"></td>
-			<td ng-bind="i.pesoTotalItem | number" style="width: 80px;"></td>		
+			<td ng-bind="i.quantidade | number"></td>
+			<td ng-bind="i.valorUnitario | currency"></td>
+			<td ng-bind="i.totalItem | currency"></td>
+			<td ng-bind="i.pesoTotalItem | number:3"></td>		
 		</tr>
 	</table>
 
 	<hr/>
 
-	<form name="vendaForm">
+	<form name="vendaForm" style="text-align: left;">
 		<select name="cliente" class="form-control" ng-model="venda.cliente" ng-options="cliente.nome for cliente in clientes" ng-required="true">
 			<option value="">Selecione um cliente</option>
 		</select>
-		<div class="input-group">
-			<input name="distancia" style="text-align: right; widht: 20%;" class="form-control" ng-model="venda.distancia" ng-required="true" type="number" step="1" min="0" placeholder="Distância(km)"/>
-			<label style="margin:5px;">km</label>
-			<input style="margin-left:5px; text-align: right;" name="pesoTotal" class="form-control" ng-model="venda.pesoTotal" disabled="true" type="text" placeholder="Peso Total(kg)"/>
-			<label style="margin:5px;">kg</label>
-			<button style="margin-left:5px;" name="btnFrete" class="btn btn-info btn-sm" ng-disabled="!venda.pesoTotal||!venda.distancia" ng-click="simularFrete()">Simular Frete</button>
-			<input style="margin-left:5px;" name="totalFrete" class="form-control" ng-model="venda.totalFrete" ng-currency="" disabled="true" ng-show="venda.totalFrete" type="text" placeholder="Total Frete"/>
 		
-		</div>	
+		<label style="margin:5px;">Distância(km)</label>
+		<input style="text-align: right; width: 150px;" name="distancia" class="form-control" ng-model="venda.distancia" ng-required="true" type="number" step="1" min="0" placeholder="Distância(km)" ng-change="distanciaAlterada()"/>
+		
+		<label style="margin:5px;">Peso total(kg)</label>
+		<input style="text-align: right; width: 150px;" name="pesoTotal" class="form-control" ng-model="venda.pesoTotal" disabled="true" type="text" placeholder="Peso Total(kg)"/>
+		
+		<label style="margin:5px;">Frete</label>
+		<div class="input-group" style="width: 270px;">
+			<input name="totalFrete" class="form-control" ng-model="venda.totalFrete" ng-currency="" disabled="true" ng-required="true" type="text" placeholder="Total Frete"/>
+			<button style="margin-left:5px;" name="btnFrete" class="btn btn-info btn-sm" ng-disabled="!venda.pesoTotal||!venda.distancia" ng-click="simularFrete()">Simular Frete</button>
+		</div>
+		
+		<label>Total dos itens</label>
+		<input style="width: 150px;" name="totalItens" class="form-control" ng-model="venda.totalItens" ng-currency="" disabled="true" type="text" placeholder="Total Itens"/>	
+		
+		<label>Total Geral</label>
+		<input style="width: 150px;" name="totalGeral" class="form-control" ng-model="venda.totalGeral" ng-currency="" disabled="true" type="text" placeholder="Total Geral"/>	
 	</form>
 	
-	<button name="btnSalvar" class="btn btn-primary btn-sm"   ng-disabled="vendaForm.$invalid" ng-click="salvarVenda(venda)">Registrar Venda</button>
-	<button name="btnLimpar" class="btn btn-secundary btn-sm" ng-disabled="false" ng-click="limparCadastro()">Limpar Campos</button>
+	<button name="btnSalvar" class="btn btn-primary"   ng-disabled="vendaForm.$invalid" ng-click="salvarVenda(venda)">Registrar Venda</button>
+	<button name="btnLimpar" class="btn btn-secundary" ng-disabled="false" ng-click="limparCadastro()">Limpar Campos</button>
 	
 	<hr/>
 
@@ -62,25 +73,25 @@
 	<div ng-show="vendas.length>0">
 
 		<ui-accordions>
-			<ui-accordion title="{{v.id}} - {{v.dataVenda | date:'dd/MM/yyyy HH:MM'}} - itens: {{v.totalItens | currency}} + frete: {{v.totalFrete | currency}} = {{v.totalGeral | currency}} / {{v.pesoTotal | number}}kg" ng-repeat="v in vendas | orderBy:data:true">
+			<ui-accordion title="{{v.id}} - {{v.dataVenda | date:'dd/MM/yyyy HH:MM'}} - itens: {{v.totalItens | currency}} + frete: {{v.totalFrete | currency}} = {{v.totalGeral | currency}}  Peso Total: {{v.pesoTotal | number}}kg" ng-repeat="v in vendas | orderBy:data:true">
 				<button class="btn btn-sm btn-danger" ng-click="removerVenda(v)">Remover venda</button>
 				{{v.cliente.nome}} - Distância: {{v.distancia | number}} km
 				<table class="table table-striped">
 					<tr>
-						<th>Id.</th>
+						<th style="width: 50px;">Id.</th>
 						<th>Vinho</th>
-						<th>Qtde.</th>
-						<th>Vl.Unit</th>
-						<th>Total</th>
-						<th style="width: 110px;">Peso Total</th>
+						<th style="width: 80px;">Qtde.</th>
+						<th style="width: 80px;">Vl.Unit.</th>
+						<th style="width: 100px;">Total Item</th>
+						<th style="width: 120px;">Peso Total</th>
 					</tr>
 					<tr style="text-align: left;" ng-repeat="i in v.itens">
-						<td ng-bind="i.id" style="width: 50px;"></td>
+						<td ng-bind="i.id"></td>
 						<td ng-bind="i.vinho.nome"></td>
-						<td ng-bind="i.quantidade | number" style="width: 70px;"></td>
-						<td ng-bind="i.valorUnitario | currency" style="width: 90px;"></td>
-						<td ng-bind="i.totalItem | currency" style="width: 90px;"></td>
-						<td style="width: 90px;">{{i.pesoTotalItem | number}}kg</td>
+						<td ng-bind="i.quantidade | number"></td>
+						<td ng-bind="i.valorUnitario | currency"></td>
+						<td ng-bind="i.totalItem | currency"></td>
+						<td ng-bind="i.pesoTotalItem | number:3"></td>
 					</tr>
 				</table>
 			</ui-accordion>

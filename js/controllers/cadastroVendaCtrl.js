@@ -60,7 +60,6 @@ angular.module("softvinho").controller("cadastroVendaCtrl",function ($scope, $wi
 		$scope.vendaForm.$setPristine();
 	};
 
-
 	$scope.incluirItem = function (item){
 		if(!$scope.venda){
 			$scope.venda = {};
@@ -68,30 +67,53 @@ angular.module("softvinho").controller("cadastroVendaCtrl",function ($scope, $wi
 		if(!$scope.venda.itens){
 			$scope.venda.itens = [];
 		}
-		item.pesoTotalItem = item.quantidade * item.pesoVinho;
+		$scope.calcularTotaisItem($scope.item);
 		$scope.venda.itens.push(angular.copy(item));
+		delete $scope.venda.totalFrete;
 		$scope.limparItem();
-		$scope.calcularPesoTotal();
+		$scope.calcularTotaisVenda();
 	};
 
 	$scope.removerItem = function (item){
 		$scope.venda.itens.splice($scope.venda.itens.indexOf(item),1);
-		$scope.calcularPesoTotal();		
+		delete $scope.venda.totalFrete;
+		$scope.calcularTotaisVenda();		
 	};
+	
+	$scope.calcularTotaisItem = function (item){
+		item.pesoTotalItem = item.quantidade * item.pesoVinho;
+		item.totalItem = item.quantidade * item.valorUnitario;
+	}
 
-	$scope.calcularPesoTotal = function (){
+	$scope.calcularTotaisVenda = function (){
 		var pesoTotal = 0;
+		var totalItens = 0;
 		if($scope.venda && $scope.venda.itens){
 			$scope.venda.itens.forEach(function (item){
 				pesoTotal += item.pesoTotalItem;
+				totalItens += item.totalItem;
 			});
 		}
+		var frete = 0;
+		if($scope.venda.totalFrete){
+			frete = $scope.venda.totalFrete;
+		}
 		$scope.venda.pesoTotal = pesoTotal;
+		$scope.venda.totalItens = totalItens;
+		$scope.venda.totalGeral = totalItens + frete; 
 	};
 
 	$scope.limparItem = function (){
 		delete $scope.item;
 		$scope.itemForm.$setPristine();
+	};
+	
+	$scope.distanciaAlterada = function (){
+		if(!$scope.venda){
+			return;
+		}
+		delete $scope.venda.totalFrete;
+		$scope.calcularTotaisVenda();
 	};
 
 	$scope.vinhoSelecionado = function (vinho){
@@ -101,8 +123,12 @@ angular.module("softvinho").controller("cadastroVendaCtrl",function ($scope, $wi
 			peso = $scope.item.vinho.peso;
 			valor = $scope.item.vinho.precoSugerido;
 		} 
+		if(!$scope.item.quantidade){
+			$scope.item.quantidade = 1;
+		}
 		$scope.item.valorUnitario = valor;
 		$scope.item.pesoVinho = peso;
+		$scope.calcularTotaisItem($scope.item);
 	};
 
 	$scope.simularFrete = function (){
@@ -110,6 +136,7 @@ angular.module("softvinho").controller("cadastroVendaCtrl",function ($scope, $wi
 		.then(
 			function (success){
 				$scope.venda.totalFrete = success.data;
+				$scope.calcularTotaisVenda();
 			}, function (error){
 				$scope.message = errorAPI.configMsgError("Calcular frete",error);
 			}
